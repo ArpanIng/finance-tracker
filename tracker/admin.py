@@ -1,11 +1,25 @@
 from django.contrib import admin
 
-from .models import User, Category, Transaction
+from .models import Category, Transaction, User
 
 admin.site.register(User)
-admin.site.register(Category)
+
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ["name", "user", "type", "created_at", "updated_at"]
+    list_filter = ["type"]
 
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ["note", "category", "amount", "type", "date"]
+    list_display = [
+        "note",
+        "category",
+        "amount",
+        "type",
+        "date",
+        "created_at",
+        "updated_at",
+    ]
+    list_filter = ["type"]

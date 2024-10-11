@@ -7,6 +7,7 @@ app_name = "tracker"
 
 urlpatterns = [
     path("", views.IndexView.as_view(), name="index"),
+    path("manage/", views.ManageView.as_view(), name="manage"),
     path("transactions/", views.TransactionListView.as_view(), name="transaction_list"),
     path(
         "transactions/new/",
@@ -32,5 +33,22 @@ urlpatterns = [
         "transactions/stats/",
         views.TransactionStatsTotalView.as_view(),
         name="transaction_statistics",
+    ),
+    path("categories/new/", views.CategoryCreateView.as_view(), name="category_create"),
+    path(
+        "categories/<int:pk>/edit/",
+        views.CategoryUpdateView.as_view(),
+        name="category_update",
+    ),
+    path(
+        "categories/<int:pk>/delete/",
+        views.CategoryDeleteView.as_view(),
+        name="category_delete",
+    ),
+    # validation urls
+    path(
+        "validate-category-name/",
+        views.CategoryNameValidationView.as_view(),
+        name="validate-category-name",
     ),
 ]

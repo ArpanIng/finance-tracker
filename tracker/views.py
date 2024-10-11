@@ -1,31 +1,31 @@
+import json
 from datetime import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import FloatField, Q
-from django.db.models.functions import TruncYear, TruncMonth
+from django.db.models import FloatField, Q, Sum
+from django.db.models.functions import TruncMonth
+from django.http import JsonResponse
 from django.shortcuts import render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_filters.views import FilterView
 
-from .utils import get_transaction_chart_data
-from .forms import TransactionForm
 from .filters import (
-    TransactionFilter,
     TransactionChartFilter,
+    TransactionFilter,
     TransactionStasticsFilter,
 )
-from .models import Transaction
+from .forms import CategoryForm, TransactionForm
+from .models import Category, Transaction, TransactionTextChoices
+from .utils import get_transaction_chart_data
 
 
 class IndexView(TemplateView):
     template_name = "tracker/index.html"
-
-
-from django.db.models import Sum
-from datetime import datetime
 
 
 class TransactionListView(LoginRequiredMixin, FilterView):
@@ -56,8 +56,6 @@ class TransactionListView(LoginRequiredMixin, FilterView):
         totals = self.get_queryset().get_total_income_and_expense()
         total_incomes = totals["total_income"]
         total_expenses = totals["total_expense"]
-        print("-----------")
-        print(totals)
         net_income = total_incomes - total_expenses
         context["total_incomes"] = total_incomes
         context["total_expenses"] = total_expenses
@@ -82,9 +80,13 @@ class TransactionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form_action_url = reverse("tracker:transaction_create")
-        context["test"] = "working"
         context["form_action_url"] = form_action_url
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
 
 class TransactionUpdateView(
@@ -108,6 +110,11 @@ class TransactionUpdateView(
         )
         context["form_action_url"] = form_action_url
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def test_func(self):
         obj = self.get_object()
@@ -195,13 +202,13 @@ class TransactionStatsTotalView(LoginRequiredMixin, View):
             .annotate(
                 total_income=Sum(
                     "amount",
-                    filter=Q(type=Transaction.TransactionTextChoices.INCOME),
+                    filter=Q(type=TransactionTextChoices.INCOME),
                     output_field=FloatField(),
                     default=0,
                 ),
                 total_expense=Sum(
                     "amount",
-                    filter=Q(type=Transaction.TransactionTextChoices.EXPENSE),
+                    filter=Q(type=TransactionTextChoices.EXPENSE),
                     output_field=FloatField(),
                     default=0,
                 ),
@@ -218,3 +225,100 @@ class TransactionStatsTotalView(LoginRequiredMixin, View):
             "filter": transaction_filter,
         }
         return render(request, self.template_name, context)
+
+
+class ManageView(LoginRequiredMixin, View):
+    template_name = "tracker/manage.html"
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        categories = (
+            Category.objects.filter(user=user).select_related("user").order_by("name")
+        )
+        income_categories = [
+            category
+            for category in categories
+            if category.type == TransactionTextChoices.INCOME
+        ]
+        expense_categories = [
+            category
+            for category in categories
+            if category.type == TransactionTextChoices.EXPENSE
+        ]
+        form = CategoryForm()
+
+        context = {
+            "income_categories": income_categories,
+            "expense_categories": expense_categories,
+            "income_categories_count": len(income_categories),
+            "expense_categories_count": len(expense_categories),
+            "form": form,
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CategoryNameValidationView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        user = request.user
+        name = data["name"]
+        exists = Category.objects.filter(user=user, name=name).exists()
+        return JsonResponse({"exists": exists})
+
+
+class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Category
+    context_object_name = "category"
+    form_class = CategoryForm
+    success_url = reverse_lazy("tracker:manage")
+    success_message = "Category created successfully."
+    template_name = "tracker/category_form.html"
+
+    def form_valid(self, form):
+        category = form.save(commit=False)
+        category.user = self.request.user
+        category.save()
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form_action_url = reverse("tracker:category_create")
+        context["form_action_url"] = form_action_url
+        return context
+
+
+class CategoryUpdateView(
+    LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView
+):
+    model = Category
+    context_object_name = "category"
+    form_class = CategoryForm
+    success_url = reverse_lazy("tracker:manage")
+    success_message = "Category updated successfully."
+    template_name = "tracker/category_form.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category = self.object
+        form_action_url = reverse("tracker:category_update", kwargs={"pk": category.pk})
+        context["form_action_url"] = form_action_url
+        return context
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.user == self.request.user
+
+
+class CategoryDeleteView(
+    LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, DeleteView
+):
+    model = Category
+    context_object_name = "category"
+    success_url = reverse_lazy("tracker:manage")
+    success_message = "Category deleted successfully."
+    template_name = "tracker/category_delete.html"
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.user == self.request.user

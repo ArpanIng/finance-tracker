@@ -9,7 +9,8 @@
   {% if request.user.is_authenticated %}
   {% include 'partials/messages.html' %}
   <div>
-    <p class="fs-5">Welcome, {{ request.user.username }}</p>
+    <p class="fs-5 fw-semibold">Welcome, {{ request.user.username }}</p>
+    <p>Here's what's happening with your money. Let's manage your expenses.</p>
   </div>
 
   <div class="border mb-4"></div>
@@ -17,10 +18,7 @@
   <div class="mb-3">
     <div class="transactions-tab">
       <a href="{% url 'tracker:transaction_list' %}" class="text-decoration-none d-flex justify-content-center align-items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journals me-1" viewBox="0 0 16 16">
-          <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2"/>
-          <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0"/>
-        </svg>
+        <i class="bi bi-journals me-1"></i>
         Transactions
       </a>
     </div>

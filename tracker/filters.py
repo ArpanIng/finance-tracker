@@ -1,8 +1,8 @@
 from datetime import datetime
+
 import django_filters
 
-
-from .models import Category, Transaction
+from .models import Category, Transaction, TransactionTextChoices
 from .utils import MONTH_CHOICES
 
 YEAR_CHOICES = [(year, year) for year in range(2020, datetime.now().year + 2)]
@@ -10,7 +10,7 @@ YEAR_CHOICES = [(year, year) for year in range(2020, datetime.now().year + 2)]
 
 class TransactionFilter(django_filters.FilterSet):
     transaction_type = django_filters.ChoiceFilter(
-        choices=Transaction.TransactionTextChoices.choices,
+        choices=TransactionTextChoices.choices,
         field_name="type",
         label="Type:",
         empty_label="All",

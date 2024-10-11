@@ -30,11 +30,3 @@ def get_transaction_chart_data(qs):
         .order_by("pk")
     )
     return list(categories), list(total_amounts)
-
-
-def calculate_totals():
-    qs = Transaction.objects.all()
-    data = qs.annotate(total=Sum("amount"))
-    print("------------")
-    print(data)
-    return data
