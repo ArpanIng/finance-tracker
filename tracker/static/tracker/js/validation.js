@@ -1,7 +1,11 @@
 const form = document.getElementById("category-form");
 const nameField = document.getElementById("id_name");
 const validationURL = form.getAttribute("data-validation-url");
+const categoryBtn = document.getElementById("category-submit-btn");
 
+/*
+check if category name exists or not
+*/
 nameField.addEventListener("input", async function () {
   const categoryName = this.value;
 
@@ -14,9 +18,8 @@ nameField.addEventListener("input", async function () {
 
   if (categoryName) {
     try {
-      const response = await fetch(validationURL, {
-        method: "POST",
-        body: JSON.stringify({ name: categoryName }),
+      const response = await fetch(`${validationURL}?name=${categoryName}`, {
+        method: "GET",
       });
 
       if (!response.ok) {
@@ -32,10 +35,10 @@ nameField.addEventListener("input", async function () {
         strongTag.innerText = "Category with this Name already exists.";
         errDiv.appendChild(strongTag);
         nameField.after(errDiv);
+        categoryBtn.setAttribute("disabled", "");
       } else {
-        console.log("no");
+        categoryBtn.removeAttribute("disabled");
       }
-      console.log(data);
     } catch (error) {
       console.error("Error:", error);
     }

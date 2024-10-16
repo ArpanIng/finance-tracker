@@ -10,14 +10,14 @@
   id="category-form"
   action="{{ form_action_url }}"
   method="post"
-  data-validation-url={% url 'tracker:validate-category-name' %}
+  data-validation-url={% url 'tracker:check_category_name' %}
   novalidate
 >
   {% csrf_token %}
   {{ form|crispy }}
   <div class="d-flex justify-content-end gap-2">
     <button type="button" class="btn btn-secondary">Cancel</button>
-    <button type="submit" class="btn btn-primary">
+    <button type="submit" class="btn btn-primary" id="category-submit-btn">
       {% if form.instance.pk %}Update{% else %}Create{% endif %}
     </button>
   </div>
@@ -25,6 +25,5 @@
 {% endblock content %}
 
 {% block scripts %}
-<script src="{% static 'tracker/js/validation.js' %}"></script>
-</script>
+<script type="text/javascript" src="{% static 'tracker/js/validation.js' %}"></script>
 {% endblock scripts %}

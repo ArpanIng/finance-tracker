@@ -1,15 +1,12 @@
-import json
 from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import TruncMonth
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_filters.views import FilterView
@@ -257,14 +254,13 @@ class ManageView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
-@method_decorator(csrf_exempt, name="dispatch")
-class CategoryNameValidationView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
+def check_category_name(request):
+    if request.method == "GET":
         user = request.user
-        name = data["name"]
+        name = request.GET.get("name", None)
         exists = Category.objects.filter(user=user, name=name).exists()
         return JsonResponse({"exists": exists})
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -322,3 +318,12 @@ class CategoryDeleteView(
     def test_func(self):
         obj = self.get_object()
         return obj.user == self.request.user
+
+
+def load_categories(request):
+    user = request.user
+    transaction_type = request.GET.get("type")
+    categories = Category.objects.filter(user=user, type=transaction_type).values(
+        "id", "name"
+    )
+    return JsonResponse(list(categories), safe=False)

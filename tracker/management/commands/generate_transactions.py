@@ -23,9 +23,11 @@ class Command(BaseCommand):
             "Bills",
             "Food",
             "Clothes",
+            "Commissions",
             "Medicine",
             "Housing",
             "Salary",
+            "Interest",
             "Social",
             "Transport",
             "Vacation",
@@ -33,7 +35,7 @@ class Command(BaseCommand):
         for category_name in category_list:
             category_type = (
                 TransactionTextChoices.INCOME
-                if category_name == "Salary"
+                if category_name in ("Commissions", "Salary", "Interest")
                 else TransactionTextChoices.EXPENSE
             )
             category, created = Category.objects.get_or_create(
@@ -41,7 +43,7 @@ class Command(BaseCommand):
             )
             if created:
                 self.stdout.write(
-                    self.style.SUCCESS(f"{len(category_list)} categories created.")
+                    self.style.SUCCESS(f"{category_name} category created.")
                 )
             else:
                 self.stdout.write(
@@ -49,16 +51,18 @@ class Command(BaseCommand):
                 )
 
         categories = Category.objects.all()
-        transaction_type_choices = [
-            TransactionTextChoices.INCOME,
-            TransactionTextChoices.EXPENSE,
-        ]
-        for i in range(5):
-            transaction_type = random.choice(transaction_type_choices)
+        income_categories = ["Salary", "Interest", "Commissions"]
+
+        for i in range(50):
+            category = random.choice(categories)
+            if category.name in income_categories:
+                transaction_type = TransactionTextChoices.INCOME
+            else:
+                transaction_type = TransactionTextChoices.EXPENSE
             # TODO: use bulk_create()
             Transaction.objects.create(
                 note=fake.word(),
-                category=random.choice(categories),
+                category=category,
                 user=user,
                 type=transaction_type,
                 amount=random.uniform(10, 2000),
