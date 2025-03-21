@@ -9,5 +9,7 @@ urlpatterns = [
     path("", include("tracker.urls")),
 ]
 
+admin.site.site_header = "Finance Tracker Administration"
+
 if settings.DEBUG:
     urlpatterns += debug_toolbar_urls()
