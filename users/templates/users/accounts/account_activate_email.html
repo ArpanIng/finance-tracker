@@ -1,0 +1,11 @@
+{% autoescape off %}
+Hello from {{ app_name }},
+
+You're receiving this email because you have requested to activate your user account.
+It can be safely ignored if you did not request a account reactivation. Click the link below to activate your account.
+
+{{ protocol }}://{{ domain }}{% url 'users:account_activate_confirm' uidb64=uid token=token %}
+
+Thank you for using {{ app_name }},
+{{ support_team_name }}
+{% endautoescape %}

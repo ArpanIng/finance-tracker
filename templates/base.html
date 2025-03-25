@@ -17,10 +17,14 @@
     {% include 'partials/header.html' %}
     <main>
       <div class="container">
+        <!-- flash messages -->
+        {% include 'partials/messages.html' %}
         {% block content %}{% endblock content %}
       </div>
     </main>
     {% block scripts %}{% endblock scripts %}
+    <!-- flash messages timeout -->
+    <script src="{% static 'js/messages.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
   </body>
 </html>

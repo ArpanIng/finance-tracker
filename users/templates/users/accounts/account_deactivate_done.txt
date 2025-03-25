@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hello {{ username }},
+
+Your account has been successfully deactivated. You can reactivate it anytime by logging in.
+
+If this was not initiated by you, please contact support immediately.
+
+Thanks,
+{{ support_team_name }}
+{% endautoescape %}

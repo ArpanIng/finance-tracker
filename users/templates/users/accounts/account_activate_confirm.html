@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block head_title %}
+Account activation confirm
+{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <form action="" method="post">
+        {% csrf_token %}
+        <button class="btn btn-primary">Confirm</button>
+    </form>
+</div>
+{% endblock content %}

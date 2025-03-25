@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block head_title %}Account deactivate done{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <h1>Account Deactivate</h1>
+    <p>Your account has been temporarily deactivated. You can reactivate it anytime by logging in.</p>
+    <div class="d-flex gap-3">
+        <a href="/">Home</a>
+        <a href="{% url 'account_login' %}">Login</a>
+    </div>
+</div>
+{% endblock content %}

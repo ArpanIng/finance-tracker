@@ -7,6 +7,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
     path("", include("tracker.urls")),
+    path("", include("users.urls")),
 ]
 
 admin.site.site_header = "Finance Tracker Administration"

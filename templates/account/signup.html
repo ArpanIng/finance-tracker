@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header p-5 pb-4 border-bottom-0">
+                    <h1 class="fw-bold mb-0 fs-2">{% trans "Sign Up" %}</h1>
+                </div>
+            
+                <div class="modal-body p-5 pt-0">
+                    {% if not SOCIALACCOUNT_ONLY %}
+                        {% url 'account_signup' as action_url %}
+                        <form account="{{ action_url }}" method="post" novalidate>
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button class="w-100 btn btn-primary" type="submit">
+                                {% trans "Sign Up" %}
+                            </button>
+                        </form>
+                        <div class="mt-4">
+                            {% setvar link %}
+                                <a href="{{ login_url }}">
+                                {% endsetvar %}
+                                {% setvar end_link %}
+                                </a>
+                            {% endsetvar %}
+                            {% element p %}
+                                {% blocktranslate %}Already have an account? {{ link }}sign in{{ end_link }}{% endblocktranslate %}
+                            {% endelement %}
+                        </div>
+                    {% endif %}
+                    {% if PASSKEY_SIGNUP_ENABLED %}
+                        {% element hr %}
+                        {% endelement %}
+                        {% element button href=signup_by_passkey_url tags="prominent,signup,outline,primary" %}
+                            {% trans "Sign up using a passkey" %}
+                        {% endelement %}
+                    {% endif %}
+                    {% if SOCIALACCOUNT_ENABLED %}
+                        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

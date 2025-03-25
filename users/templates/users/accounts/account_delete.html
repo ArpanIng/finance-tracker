@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Delete Account{% endblock head_title %}
+
+{% block content %}
+<div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4 shadow">
+            
+            <div class="text-center pt-4">
+                <i class="bi bi-exclamation-circle text-danger fs-2"></i>
+            </div>
+            <div class="modal-header border-bottom-0 m-auto">
+                <h5 class="mb-0">Delete Your Account</h5>
+            </div>
+
+            <div class="modal-body p-5 pt-0">
+                <p class="text-center">Are you sure you want to delete your account? This action cannot be undone.</p>
+                <form account="{% url 'users:account_delete' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-danger w-100" type="submit">Delete account</button>
+                </form>
+                <div class="mt-2">
+                    <a href="{% url 'users:settings' %}" class="btn btn-light w-100">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

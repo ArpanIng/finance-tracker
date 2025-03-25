@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Account activate{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <form action="{% url 'users:account_activate' %}" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary">
+            Send activation link
+        </button>
+    </form>
+</div>
+{% endblock content %}

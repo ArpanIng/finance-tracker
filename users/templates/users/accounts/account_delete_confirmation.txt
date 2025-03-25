@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi,
+
+We have processed your request for account deletion and your name and content have been removed from the {{ app_name }} Platform.
+
+We're sorry to see you go, but we hope you consider joining the {{ support_team_name }} community in the future.
+
+Thanks,
+{{ support_team_name }}
+{% endautoescape %}

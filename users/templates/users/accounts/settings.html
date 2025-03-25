@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block head_title %}Settings{% endblock head_title %}
+
+{% block content %}
+<!-- account section -->
+<div class="container">
+    <div class="border-bottom border-2 my-4">
+        <div class="container">
+            <h5>Account</h5>
+        </div>
+    </div>
+    <div class="container">
+        <div class="d-flex">
+            <div>
+                <p class="mb-1 fw-bold">Username</p>
+                <p class="mt-0 mb-0">{{ request.user.username }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- account security section -->
+<div class="container">
+    <div class="border-bottom border-2 my-4">
+        <div class="container">
+            <h5>Account security</h5>
+        </div>
+    </div>
+    <div class="container">
+        <div class="d-flex justify-content-between my-4">
+            <!-- account email section -->
+            <div>
+                <p class="mb-1 fw-bold">Email</p>
+                <p class="mt-0 mb-0">{{ request.user.email }}</p>
+            </div>
+            <div>
+                <a href="{% url 'account_email' %}" class="btn btn-light">
+                    Change email
+                </a>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <div>
+                <p class="mb-1 fw-bold">Password change</p>
+                <p class="mt-0 mb-0">Change your password to login to your account.</p>
+            </div>
+            <div>
+                <a href="{% url 'account_change_password' %}" class="btn btn-light">
+                    Change password
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- support section -->
+<div class="container">
+    <div class="border-bottom border-2 my-4">
+        <div class="container">
+            <h5>Support</h5>
+        </div>
+    </div>
+    <div class="container">
+        <div class="d-flex justify-content-between my-4">
+            <!-- account deactivation section -->
+            <div>
+                <p class="text-danger mb-1">Deactivate account</p>
+                <p class="mt-0 mb-0">Temporarly deactivate the account.</p>
+            </div>
+            <div>
+                <a href="{% url 'users:account_deactivate' %}" class="btn btn-light">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- account delete section -->
+        <div class="d-flex justify-content-between">
+            <div>
+                <p class="text-danger mb-1">Delete my account</p>
+                <p class="mt-0 mb-0">Permanently delete the account.</p>
+            </div>
+            <div>
+                <a href="{% url 'users:account_delete' %}" class="btn btn-light">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

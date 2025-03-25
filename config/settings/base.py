@@ -10,12 +10,15 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default='django-insecure-%7%w3tq%az-vn9-jk7$e&%(x(fgtk2tgar8ug7+*#maba8lrs4')
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="django-insecure-%7%w3tq%az-vn9-jk7$e&%(x(fgtk2tgar8ug7+*#maba8lrs4",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=['localhost'])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 # Application definition
 
@@ -39,8 +42,6 @@ INSTALLED_APPS = [
     "django_htmx",
 ]
 
-AUTH_USER_MODEL = "tracker.User"
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -49,7 +50,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # allauth account middleware
     "allauth.account.middleware.AccountMiddleware",
+    # django htmx middleware
     "django_htmx.middleware.HtmxMiddleware",
 ]
 
@@ -133,6 +136,27 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+# custom User model configuration
+AUTH_USER_MODEL = "users.User"
+
+# django flash messages configuration
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-secondary",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-danger",
+}
+
+# custom settings configuration
+APP_NAME = "BudgetMe"
+
+SUPPORT_FROM_EMAIL = "noreply@support.com"
+SUPPORT_TEAM_NAME = f"{APP_NAME} Support"
 
 # logging configuration
 from .logging import LOGGING
@@ -141,4 +165,7 @@ from .logging import LOGGING
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-
+# django allauth account configuration
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
+ACCOUNT_LOGIN_METHODS = {"email"}
