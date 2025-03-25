@@ -10,7 +10,7 @@ urlpatterns = [
     path("", include("users.urls")),
 ]
 
-admin.site.site_header = "Finance Tracker Administration"
+admin.site.site_header = "BudgetMe Administration"
 
 if settings.DEBUG:
     urlpatterns += debug_toolbar_urls()

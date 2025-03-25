@@ -1,31 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block head_title %}Finance Tracker{% endblock head_title %}
+{% block head_title %}BudgetMe{% endblock head_title %}
 
 {% block content %}
 <div class="px-4 py-5 my-5 text-center">
-  <h1 class="display-5 fw-bold text-body-emphasis">Personal Finance Tracker</h1>
-  {% if request.user.is_authenticated %}
-  {% include 'partials/messages.html' %}
-  <div>
-    <p class="fs-5 fw-semibold">Welcome, {{ request.user.username }}</p>
-    <p>Here's what's happening with your money. Let's manage your expenses.</p>
-  </div>
-
-  <div class="border mb-4"></div>
-
-  <div class="mb-3">
-    <div class="transactions-tab">
-      <a href="{% url 'tracker:transaction_list' %}" class="text-decoration-none d-flex justify-content-center align-items-center">
-        <i class="bi bi-journals me-1"></i>
-        Transactions
-      </a>
+    <h1 class="display-5 fw-bold text-body-emphasis">Personal Finance Tracker</h1>
+    {% if request.user.is_authenticated %}
+    <div>
+        <p class="fs-5 fw-semibold">Welcome, {{ request.user.username }}</p>
+        <p>Here's what's happening with your money. Let's manage your expenses.</p>
     </div>
-  </div>
-  {% endif %}
-  <div class="col-lg-6 mx-auto">
-    <p class="lead mb-4">{% lorem 1 b random %}</p>
-  </div>
+
+    <div class="border mb-4"></div>
+
+    <div class="mb-3">
+        <div class="transactions-tab">
+            <a href="{% url 'tracker:transaction_list' %}" class="text-decoration-none d-flex justify-content-center align-items-center">
+                <i class="bi bi-journals me-1"></i>
+                Transactions
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Displays random text -->
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">{% lorem 1 b random %}</p>
+    </div>
 </div>
 {% endblock content %}

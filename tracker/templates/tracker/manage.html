@@ -5,116 +5,85 @@
 {% block head_title %}Manage{% endblock head_title %}
 
 {% block content %}
-
-{% include 'partials/messages.html' %}
-
-<div class="border">
-  <div class="container mt-3">
-    <p class="fs-3 fw-semibold">Manage</p>
-    <p class="text-muted">Manage your account settings and categories</p>
-  </div>
+<div class="border rounded">
+    <div class="container mt-3">
+        <p class="fs-3 fw-semibold">Manage</p>
+        <p class="text-muted">Manage your account settings and categories</p>
+    </div>
 </div>
 
 <div class="my-4">
-  <div class="d-flex align-items-center justify-content-between">
-    <div>
-      <p class="fs-4 fw-bold">Categories</p>
+    <div class="d-flex align-items-center justify-content-between">
+        <div>
+            <p class="fs-4 fw-bold">Categories</p>
+        </div>
+        <div>  
+            <a href="{% url 'tracker:category_create' %}" class="btn btn-success rounded-pill">
+                <i class="bi bi-plus-lg me-1"></i> Add category
+            </a>
+        </div>
     </div>
-    <div>
-      <a href="{% url 'tracker:category_create' %}" class="btn btn-primary">Create category</a>
-    </div>
-  </div>
 </div>
 
 <!-- Income category block -->
-<div class="container border mt-4">
-  <div class="d-flex justify-content-between py-2">
-    <div class="fw-semibold text-success">
-      <i class="bi bi-graph-up-arrow me-1"></i>
-      Income categories
+<div class="container border rounded mt-4">
+    <div class="d-flex justify-content-between pt-3">
+        <div class="fw-semibold text-success">
+            <i class="bi bi-graph-up-arrow me-1"></i>
+            Income categories
+        </div>
     </div>
-  </div>
 
-  <div class="table-responsive mt-1">
-    <table class="table caption-top">
-      <caption>{{ income_categories_count }} income categor{{ income_categories_count|pluralize:'y,ies' }}</caption>
-      <thead class="text-capitalize">
-        <tr>
-          <th>Name</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for category in income_categories %}
-        <tr>
-          <td>{{ category.name }}</td>
-          <td class="py-0">
-            <a href="{% url 'tracker:category_update' category.pk %}">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-
-            <!-- Delete Button trigger modal -->
-            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#categoryDelete-{{ category.pk }}">
-              <i class="bi bi-trash-fill text-danger"></i>
-            </button>
-
-            <!-- Delete Modal -->
-            {% include 'tracker/category_delete.html' %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="2">No data available.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="table-responsive mt-1">
+        <table class="table caption-top">
+            <caption>{{ income_categories_count }} income categor{{ income_categories_count|pluralize:'y,ies' }}</caption>
+            <thead class="text-capitalize table-secondary">
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in income_categories %}
+                {% include 'tracker/partials/category_table_row.html' %}
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">No data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- expense category block -->
-<div class="container border mt-4">
-  <div class="d-flex justify-content-between py-2">
-    <div class="fw-semibold text-danger">
-      <i class="bi bi-graph-down-arrow me-1"></i>
-      Expense categories
+<div class="container border rounded my-4">
+    <div class="d-flex justify-content-between pt-3">
+        <div class="fw-semibold text-danger">
+            <i class="bi bi-graph-down-arrow me-1"></i>
+            Expense categories
+        </div>
     </div>
-  </div>
 
-  <div class="table-responsive mt-1">
-    <table class="table caption-top">
-      <caption>{{ expense_categories_count }} expense categor{{ expense_categories_count|pluralize:'y,ies' }}</caption>
-      <thead class="text-capitalize">
-        <tr>
-          <th>Name</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for category in expense_categories %}
-        <tr>
-          <td>{{ category.name }}</td>
-          <td class="py-0">
-            <a href="{% url 'tracker:category_update' category.pk %}">
-              <i class="bi bi-pencil-square"></i>
-            </a>
-
-            <!-- Delete Button trigger modal -->
-            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#categoryDelete-{{ category.pk }}">
-              <i class="bi bi-trash-fill text-danger h-20 w-20"></i>
-            </button>
-
-            <!-- Delete Modal -->
-            {% include 'tracker/category_delete.html' %}
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="2">No data available.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+    <div class="table-responsive mt-1">
+        <table class="table caption-top">
+            <caption>{{ expense_categories_count }} expense categor{{ expense_categories_count|pluralize:'y,ies' }}</caption>
+            <thead class="text-capitalize table-secondary">
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in expense_categories %}
+                {% include 'tracker/partials/category_table_row.html' %}
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center">No data available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock content %}

@@ -2,104 +2,104 @@
 {% load humanize %}
 
 <div class="row" id="transaction-div">
-  <div class="col-md-9 order-md-1 order-last">
-    <div class="my-4">
-      <h4>Totals</h4>
-      <table class="table">
-        <thead class="text-uppercase">
-          <tr>
-            <th class="text-primary">Income</th>
-            <th class="text-danger">Expense</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="text-primary">Rs. {{ total_incomes|floatformat:"2"|intcomma }}</td>
-            <td class="text-danger">Rs. {{ total_expenses|floatformat:"2"|intcomma }}</td>
-            <td>Rs. {{ net_income|floatformat:"2"|intcomma }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="col-md-9 order-md-1 order-last">
+        <div class="my-4">
+            <h4>Totals</h4>
+            <table class="table">
+                <thead class="text-uppercase">
+                    <tr>
+                        <th class="text-primary">Income</th>
+                        <th class="text-danger">Expense</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-primary">Rs. {{ total_incomes|floatformat:"2"|intcomma }}</td>
+                        <td class="text-danger">Rs. {{ total_expenses|floatformat:"2"|intcomma }}</td>
+                        <td>Rs. {{ net_income|floatformat:"2"|intcomma }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4>Transactions</h4>
+
+            <a href="{% url 'tracker:transaction_create' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="text-uppercase table-light">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Note</th>
+                        <th scope="col">Catetory</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.date }}</td>
+                        <td>{{ transaction.note }}</td>
+                        <td>{{ transaction.category.name }}</td>
+                        <td>{{ transaction.get_type_display }}</td>
+                        {% if transaction.type == 'INC' %}
+                        <td class="text-primary">Rs. {{ transaction.amount }}</td>
+                        {% else %}
+                        <td class="text-danger">Rs. {{ transaction.amount }}</td>
+                        {% endif %}
+                        <td class="py-0">
+                        <a href="{% url 'tracker:transaction_update' transaction.pk %}" class="btn btn-link">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+
+                        <!-- Transaction delete button trigger modal -->
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#transactionDelete">
+                            <i class="bi bi-trash-fill text-danger"></i>
+                        </button>
+
+                        <!-- Transaction delete modal -->
+                        {% include 'tracker/transaction_delete.html' %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No data available.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mb-4">
+            <a href="{% url 'tracker:transaction_charts' %}" class="text-decoration-none d-flex justify-content-center align-items-center">
+                <i class="bi bi-bar-chart me-1"></i>
+                Statistics
+            </a>
+        </div>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center">
-      <h4>Transactions</h4>
-
-      <a href="{% url 'tracker:transaction_create' %}">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-        </svg>
-      </a>
+    <div class="col-md-3 order-md-2 order-first">
+        <div class="mb-4">
+            <form
+                hx-get="{% url 'tracker:transaction_list' %}"
+                hx-target="#transaction-div"
+                hx-swap="outerHTML"
+                id="filterForm"
+            >
+                {{ filter.form|crispy }}
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </form>
+        </div>
     </div>
-
-    <div class="table-responsive">
-      <table class="table">
-        <thead class="text-uppercase">
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Note</th>
-            <th scope="col">Catetory</th>
-            <th scope="col">Type</th>
-            <th scope="col">Amount</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for transaction in transactions %}
-          <tr>
-            <td>{{ transaction.date }}</td>
-            <td>{{ transaction.note }}</td>
-            <td>{{ transaction.category.name }}</td>
-            <td>{{ transaction.get_type_display }}</td>
-            {% if transaction.type == 'INC' %}
-            <td class="text-primary">Rs. {{ transaction.amount }}</td>
-            {% else %}
-            <td class="text-danger">Rs. {{ transaction.amount }}</td>
-            {% endif %}
-            <td class="py-0">
-              <a href="{% url 'tracker:transaction_update' transaction.pk %}">
-                <i class="bi bi-pencil-square"></i>
-              </a>
-
-              <!-- Delete Button trigger modal -->
-              <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#transactionDelete">
-                <i class="bi bi-trash-fill text-danger"></i>
-              </button>
-
-              <!-- Modal -->
-              {% include 'tracker/transaction_delete.html' %}
-            </td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="6" class="text-center">No data available.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="mb-4">
-      <a href="{% url 'tracker:transaction_charts' %}" class="text-decoration-none d-flex justify-content-center align-items-center">
-        <i class="bi bi-bar-chart me-1"></i>
-        Statistics
-      </a>
-    </div>
-  </div>
-
-  <div class="col-md-3 order-md-2 order-first">
-    <div class="mb-4">
-      <form
-        hx-get="{% url 'tracker:transaction_list' %}"
-        hx-target="#transaction-div"
-        hx-swap="outerHTML"
-        id="filterForm"
-      >
-        {{ filter.form|crispy }}
-        <button type="submit" class="btn btn-primary">Filter</button>
-      </form>
-    </div>
-  </div>
 </div>

@@ -1,0 +1,16 @@
+<tr>
+    <td>{{ category.name }}</td>
+    <td class="py-0">
+        <a href="{% url 'tracker:category_update' category.pk %}" class="btn btn-link">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+
+        <!-- Delete Button trigger modal -->
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#categoryDelete-{{ category.pk }}">
+            <i class="bi bi-trash-fill text-danger"></i>
+        </button>
+
+        <!-- Delete Modal -->
+        {% include 'tracker/category_delete.html' %}
+    </td>
+</tr>

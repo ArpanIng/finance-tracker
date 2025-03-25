@@ -254,15 +254,6 @@ class ManageView(LoginRequiredMixin, View):
         return render(request, self.template_name, context)
 
 
-def check_category_name(request):
-    if request.method == "GET":
-        user = request.user
-        name = request.GET.get("name", None)
-        exists = Category.objects.filter(user=user, name=name).exists()
-        return JsonResponse({"exists": exists})
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
-
 class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Category
     context_object_name = "category"

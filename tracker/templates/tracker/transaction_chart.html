@@ -7,169 +7,168 @@
 
 {% block content %}
 <div id="chart-block">
-  <h1>
-    <i class="bi bi-graph-down"></i>
-    Charts
-  </h1>
+    <h1>
+        <i class="bi bi-graph-down"></i>&nbsp;Charts
+    </h1>
 
-  <div class="row" id="transaction-chart-div">
-    <div class="col-md-9 order-md-1 order-last">
-      <div class="container mt-4" id="transaction-charts">
-        <div class="row gap-4 gap-md-0">
-          <div class="col-md-6">
-            {% if income_categories|length > 0 %}
-            <div>
-              <canvas id="incomeChart"></canvas>
+    <div class="row" id="transaction-chart-div">
+        <div class="col-md-9 order-md-1 order-last">
+            <div class="container mt-4" id="transaction-charts">
+                <div class="row gap-4 gap-md-0">
+                    <div class="col-md-6">
+                        {% if income_categories|length > 0 %}
+                        <div>
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                        
+                        <script>
+                            const incomeCtx = document.getElementById('incomeChart');
+                            
+                            new Chart(incomeCtx, {
+                                type: 'pie',
+                                data: {
+                                labels: [{% for category in income_categories %}'{{ category }}',{% endfor %}],
+                                datasets: [{
+                                    label: 'Income',
+                                    data: [{% for total in income_totals %}'{{ total }}',{% endfor %}],
+                                    borderWidth: 1
+                                }]
+                                },
+                                options: {
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Income'
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                        {% else %}
+                        <p class="text-center text-muted mt-4">No data available.</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        {% if expense_categories|length > 0 %}
+                        <div>
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                        
+                        <script>
+                            const expenseCtx = document.getElementById('expenseChart');
+                            
+                            new Chart(expenseCtx, {
+                                type: 'pie',
+                                data: {
+                                labels: [{% for category in expense_categories %}'{{ category }}',{% endfor %}],
+                                datasets: [{
+                                    label: 'Expense',
+                                    data: [{% for total in expense_totals %}'{{ total }}',{% endfor %}],
+                                    borderWidth: 1,
+                                }]
+                                },
+                                options: {
+                                    plugins: {
+                                        legend: {
+                                            position: 'right',
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Expenses'
+                                        }
+                                    },
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                        {% else %}
+                        <p class="text-center text-muted mt-4">No data available.</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            
-            <script>
-              const incomeCtx = document.getElementById('incomeChart');
-            
-              new Chart(incomeCtx, {
-                type: 'pie',
-                data: {
-                  labels: [{% for category in income_categories %}'{{ category }}',{% endfor %}],
-                  datasets: [{
-                    label: 'Income',
-                    data: [{% for total in income_totals %}'{{ total }}',{% endfor %}],
-                    borderWidth: 1
-                  }]
-                },
-                options: {
-                  plugins: {
-                    legend: {
-                      position: 'right',
-                    },
-                    title: {
-                      display: true,
-                      text: 'Income'
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true
-                    }
-                  }
-                }
-              });
-            </script>
-            {% else %}
-            <p class="text-center text-muted mt-4">No data available.</p>
-            {% endif %}
-          </div>
-          <div class="col-md-6">
-            {% if expense_categories|length > 0 %}
-            <div>
-              <canvas id="expenseChart"></canvas>
+            <div class="container mt-4" id="transaction-charts-infos">
+                <div class="row gap-2 gap-md-0">
+                    <div class="col-md-6">
+                        <div class="card border border-2">
+                            <div class="card-body">
+                                <table class="table mb-0 table-borderless">
+                                    <tbody>
+                                        {% for data in income_data %}
+                                        <tr>
+                                            <td>{{ data.category }}</td>
+                                            <td>Rs. {{ data.amount|floatformat:2|intcomma }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted">No data available.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border border-2">
+                            <div class="card-body">
+                                <table class="table mb-0 table-borderless">
+                                    <tbody>
+                                        {% for data in expense_data %}
+                                        <tr>
+                                            <td>{{ data.category }}</td>
+                                            <td>Rs. {{ data.amount|floatformat:2|intcomma }}</td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted">No data available.</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <script>
-              const expenseCtx = document.getElementById('expenseChart');
-            
-              new Chart(expenseCtx, {
-                type: 'pie',
-                data: {
-                  labels: [{% for category in expense_categories %}'{{ category }}',{% endfor %}],
-                  datasets: [{
-                    label: 'Expense',
-                    data: [{% for total in expense_totals %}'{{ total }}',{% endfor %}],
-                    borderWidth: 1,
-                  }]
-                },
-                options: {
-                  plugins: {
-                    legend: {
-                      position: 'right',
-                    },
-                    title: {
-                      display: true,
-                      text: 'Expenses'
-                    }
-                  },
-                  scales: {
-                    y: {
-                      beginAtZero: true
-                    }
-                  }
-                }
-              });
-            </script>
-            {% else %}
-            <p class="text-center text-muted mt-4">No data available.</p>
-            {% endif %}
-          </div>
+        
+            <!-- spinner -->
+            <div class="d-flex justify-content-center htmx-indicator" id="spinner">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="container mt-4" id="transaction-charts-infos">
-        <div class="row gap-2 gap-md-0">
-          <div class="col-md-6">
-            <div class="card border border-2 chart-card">
-              <div class="card-body">
-                <table class="table mb-0 table-borderless">
-                  <tbody>
-                    {% for data in income_data %}
-                    <tr>
-                      <td>{{ data.category }}</td>
-                      <td>Rs. {{ data.amount|floatformat:2|intcomma }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                      <td colspan="2" class="text-center text-muted">No data available.</td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
+    
+        <div class="col-md-3 order-md-2 order-first">
+            <div class="mb-4">
+                <form action="" method="get">
+                    {{ filter.form|crispy }}
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="resetBtn"
+                        data-url="{% url 'tracker:transaction_charts' %}"
+                    >
+                        Reset
+                    </button>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card border border-2 chart-card">
-              <div class="card-body">
-                <table class="table mb-0 table-borderless">
-                  <tbody>
-                    {% for data in expense_data %}
-                    <tr>
-                      <td>{{ data.category }}</td>
-                      <td>Rs. {{ data.amount|floatformat:2|intcomma }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                      <td colspan="2" class="text-center text-muted">No data available.</td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-  
-      <!-- spinner -->
-      <div class="d-flex justify-content-center htmx-indicator" id="spinner">
-        <div class="spinner-border" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-      </div>
     </div>
-  
-    <div class="col-md-3 order-md-2 order-first">
-      <div class="mb-4">
-        <form action="" method="get">
-          {{ filter.form|crispy }}
-          <button
-            type="button"
-            class="btn btn-secondary"
-            id="resetBtn"
-            data-url="{% url 'tracker:transaction_charts' %}"
-          >
-            Reset
-          </button>
-          <button type="submit" class="btn btn-primary">Filter</button>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock content %}
 

@@ -13,4 +13,7 @@
     {% element p %}
         {% translate "This account is inactive." %}
     {% endelement %}
+    <div>
+        <a href="{% url 'users:account_activate' %}">Activate account</a>
+    </div>
 {% endblock content %}

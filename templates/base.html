@@ -2,29 +2,29 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="{% static 'favicon.ico' %}" />
-    <title>{% block head_title %}{% endblock head_title %}</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <script src="{% static 'js/htmx.min.js' %}" defer></script>
-    <script src="{% static 'js/chart.js' %}"></script>
-  </head>
-  <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    {% include 'partials/header.html' %}
-    <main>
-      <div class="container">
-        <!-- flash messages -->
-        {% include 'partials/messages.html' %}
-        {% block content %}{% endblock content %}
-      </div>
-    </main>
-    {% block scripts %}{% endblock scripts %}
-    <!-- flash messages timeout -->
-    <script src="{% static 'js/messages.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-  </body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" href="{% static 'favicon.ico' %}" />
+        <title>{% block head_title %}{% endblock head_title %}</title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        <script src="{% static 'js/htmx.min.js' %}" defer></script>
+        <script src="{% static 'js/chart.js' %}"></script>
+    </head>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+        {% include 'partials/header.html' %}
+        <main>
+        <div class="container">
+            <!-- flash messages -->
+            {% include 'partials/messages.html' %}
+            {% block content %}{% endblock content %}
+        </div>
+        </main>
+        {% block scripts %}{% endblock scripts %}
+        <!-- flash messages timeout -->
+        <script src="{% static 'js/messages.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    </body>
 </html>

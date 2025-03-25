@@ -46,6 +46,4 @@ urlpatterns = [
         name="category_delete",
     ),
     path("load-categories/", views.load_categories, name="load_categories"),
-    # validation urls
-    path("check-category-name", views.check_category_name, name="check_category_name"),
 ]
