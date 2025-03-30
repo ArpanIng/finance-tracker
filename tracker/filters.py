@@ -3,9 +3,7 @@ from datetime import datetime
 import django_filters
 
 from .models import Category, Transaction, TransactionTextChoices
-from .utils import MONTH_CHOICES
-
-YEAR_CHOICES = [(year, year) for year in range(2020, datetime.now().year + 2)]
+from .utils import MONTH_CHOICES, YEAR_CHOICES
 
 
 class TransactionFilter(django_filters.FilterSet):
@@ -45,7 +43,7 @@ class TransactionFilter(django_filters.FilterSet):
         self.form.initial["month"] = datetime.now().month
 
 
-class TransactionChartFilter(django_filters.FilterSet):
+class TransactionStasticsFilter(django_filters.FilterSet):
     year = django_filters.ChoiceFilter(
         choices=YEAR_CHOICES,
         field_name="date",
@@ -71,7 +69,7 @@ class TransactionChartFilter(django_filters.FilterSet):
         self.form.initial["month"] = datetime.now().month
 
 
-class TransactionStasticsFilter(django_filters.FilterSet):
+class TransactionTotalStasticsFilter(django_filters.FilterSet):
     year = django_filters.ChoiceFilter(
         choices=YEAR_CHOICES,
         field_name="date",

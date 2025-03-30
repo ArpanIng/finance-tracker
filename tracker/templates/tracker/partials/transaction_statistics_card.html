@@ -1,0 +1,20 @@
+{% load humanize %}
+
+<div class="card border border-2">
+    <div class="card-body">
+        <table class="table mb-0 table-borderless">
+            <tbody>
+                {% for data in data %}
+                    <tr>
+                        <td>{{ data.category }}</td>
+                        <td>Rsd. {{ data.amount|floatformat:2|intcomma }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center text-muted">No data available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

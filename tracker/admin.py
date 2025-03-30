@@ -14,6 +14,7 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = [
         "note",
         "category",
+        "user",
         "amount",
         "type",
         "date",

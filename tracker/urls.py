@@ -25,14 +25,19 @@ urlpatterns = [
         name="transaction_delete",
     ),
     path(
-        "transactions/charts/",
-        views.TransactionChartsView.as_view(),
-        name="transaction_charts",
+        "transactions/statistics/",
+        views.TransactionStatisticsView.as_view(),
+        name="transaction_statistics",
     ),
     path(
-        "transactions/stats/",
-        views.TransactionStatsTotalView.as_view(),
-        name="transaction_statistics",
+        "transactions/total-statistics/",
+        views.TransactionTotalStatisticsView.as_view(),
+        name="transaction_total_statistics",
+    ),
+    path(
+        "transactions/export/",
+        views.TransactionExportView.as_view(),
+        name="transaction_export",
     ),
     path("categories/new/", views.CategoryCreateView.as_view(), name="category_create"),
     path(

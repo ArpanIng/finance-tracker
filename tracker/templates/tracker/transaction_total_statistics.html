@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block head_title %}Total Statistics{% endblock head_title %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- chart data -->
+        <div class="col-md-9 order-md-1 order-last">
+
+            <div class="border-top border-bottom border-3 my-4">
+                <div class="my-4">
+                    <p class="text-muted">Balance</p>
+                    <p class="fs-4 fw-semibold">{{ total_yearly_balance }}</p>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fs-6 text-primary">{{ total_yearly_incomes }}</span>
+                        <span class="fs-6 text-danger">{{ total_yearly_expenses }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar chart -->
+            <div>
+                <div>
+                    <canvas id="myChart"></canvas>
+                </div>
+                    
+                <script>
+                    const ctx = document.getElementById('myChart');
+
+                    const datas = {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                        {
+                            label: 'Income',
+                            data: [{% for data in total_incomes_per_month %}'{{ data }}',{% endfor %}],
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgb(54, 162, 235)',
+                            borderWidth: 1,
+                            borderSkipped: false,
+                        },
+                        {
+                            label: 'Expenses',
+                            data: [{% for data in total_expenses_per_month %}'{{ data }}',{% endfor %}],
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgb(255, 99, 132)',
+                            borderWidth: 1,
+                            borderSkipped: false,
+                        },
+                        ]
+                    };
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: datas,
+                        options: {
+                        scales: {
+                            y: {
+                            beginAtZero: true
+                            }
+                        }
+                        }
+                    });
+                </script>
+            </div>
+        </div>
+
+        <!-- filter form -->
+        <div class="col-md-3 order-md-2 order-first">
+            <div class="mb-4">
+                <form action="" method="get">
+                    {{ filter.form|crispy }}
+                    <a
+                        href="{% url 'tracker:transaction_total_statistics' %}"
+                        class="btn btn-secondary"
+                    >
+                        Reset
+                    </a>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

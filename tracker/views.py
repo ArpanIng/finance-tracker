@@ -1,9 +1,8 @@
+import logging
 from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import FloatField, Q, Sum
-from django.db.models.functions import TruncMonth
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -12,13 +11,16 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_filters.views import FilterView
 
 from .filters import (
-    TransactionChartFilter,
     TransactionFilter,
     TransactionStasticsFilter,
+    TransactionTotalStasticsFilter,
 )
 from .forms import CategoryForm, TransactionForm
 from .models import Category, Transaction, TransactionTextChoices
 from .utils import get_transaction_chart_data
+
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -26,6 +28,8 @@ class IndexView(TemplateView):
 
 
 class TransactionListView(LoginRequiredMixin, FilterView):
+    """List all transaction of the request user."""
+
     model = Transaction
     context_object_name = "transactions"
     filterset_class = TransactionFilter
@@ -33,9 +37,10 @@ class TransactionListView(LoginRequiredMixin, FilterView):
 
     def get_queryset(self):
         user = self.request.user
-        # Retrieve query parameters
+        # get query parameters, default to current year and month
         selected_year = self.request.GET.get("year", datetime.now().year)
         selected_month = self.request.GET.get("month", datetime.now().month)
+
         return (
             super()
             .get_queryset()
@@ -132,16 +137,16 @@ class TransactionDeleteView(
         return obj.user == self.request.user
 
 
-class TransactionChartsView(LoginRequiredMixin, FilterView):
-    """Display chart based on the year and month."""
+class TransactionStatisticsView(LoginRequiredMixin, FilterView):
+    """Display monthly transaction chart stats."""
 
     model = Transaction
-    filterset_class = TransactionChartFilter
-    template_name = "tracker/transaction_chart.html"
+    filterset_class = TransactionStasticsFilter
+    template_name = "tracker/transaction_statistics.html"
 
     def get_queryset(self):
         user = self.request.user
-        # Retrieve query parameters
+        # Retrieve query parameters, default to current year and month
         selected_year = self.request.GET.get("year", datetime.now().year)
         selected_month = self.request.GET.get("month", datetime.now().month)
 
@@ -184,44 +189,38 @@ class TransactionChartsView(LoginRequiredMixin, FilterView):
         return context
 
 
-class TransactionStatsTotalView(LoginRequiredMixin, View):
-    template_name = "tracker/transaction_statistics.html"
+class TransactionTotalStatisticsView(LoginRequiredMixin, FilterView):
+    """Display total yearly transaction chart stats."""
 
-    def get(self, request, *args, **kwargs):
+    filterset_class = TransactionTotalStasticsFilter
+    template_name = "tracker/transaction_total_statistics.html"
+
+    def get_queryset(self):
         user = self.request.user
-        total_balance = Transaction.objects.total_balance(user)
+        # get query parameters, default to current year
         year = self.request.GET.get("year", datetime.now().year)
-        transaction_filter = TransactionStasticsFilter()
-        monthly_totals = (
-            Transaction.objects.filter(date__year=year)
-            .annotate(month=TruncMonth("date"))
-            .values("month")
-            .annotate(
-                total_income=Sum(
-                    "amount",
-                    filter=Q(type=TransactionTextChoices.INCOME),
-                    output_field=FloatField(),
-                    default=0,
-                ),
-                total_expense=Sum(
-                    "amount",
-                    filter=Q(type=TransactionTextChoices.EXPENSE),
-                    output_field=FloatField(),
-                    default=0,
-                ),
-            )
-        )
-        incomes = monthly_totals.values_list("total_income", flat=True)
-        expenses = monthly_totals.values_list("total_expense", flat=True)
+        return Transaction.objects.filter(user=user, date__year=year)
 
-        context = {
-            "total_balance": total_balance,
-            "monthly_totals": monthly_totals,
-            "incomes": incomes,
-            "expenses": expenses,
-            "filter": transaction_filter,
-        }
-        return render(request, self.template_name, context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+
+        total_yearly_balance = queryset.total_balance()
+        yearly_totals = queryset.get_total_income_and_expense()
+        total_yearly_incomes = yearly_totals["total_income"]
+        total_yearly_expenses = yearly_totals["total_expense"]
+        monthly_totals = queryset.get_monthly_totals()
+        total_incomes_per_month = monthly_totals.values_list("total_income", flat=True)
+        total_expenses_per_month = monthly_totals.values_list(
+            "total_expense", flat=True
+        )
+
+        context["total_yearly_balance"] = total_yearly_balance
+        context["total_yearly_incomes"] = total_yearly_incomes
+        context["total_yearly_expenses"] = total_yearly_expenses
+        context["total_incomes_per_month"] = total_incomes_per_month
+        context["total_expenses_per_month"] = total_expenses_per_month
+        return context
 
 
 class ManageView(LoginRequiredMixin, View):
@@ -274,6 +273,11 @@ class CategoryCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context["form_action_url"] = form_action_url
         return context
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
 
 class CategoryUpdateView(
     LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView
@@ -291,6 +295,11 @@ class CategoryUpdateView(
         form_action_url = reverse("tracker:category_update", kwargs={"pk": category.pk})
         context["form_action_url"] = form_action_url
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
     def test_func(self):
         obj = self.get_object()
@@ -312,6 +321,7 @@ class CategoryDeleteView(
 
 
 def load_categories(request):
+    """Return list of categories of the user based on the transaction type."""
     user = request.user
     transaction_type = request.GET.get("type")
     categories = Category.objects.filter(user=user, type=transaction_type).values(

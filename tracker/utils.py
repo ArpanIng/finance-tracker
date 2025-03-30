@@ -1,6 +1,9 @@
-from django.db.models import Sum
+from datetime import datetime
 
-from .models import Category, Transaction
+from django.db.models import Sum, QuerySet
+
+
+from .models import Category
 
 MONTH_CHOICES = [
     (1, "January"),
@@ -16,17 +19,17 @@ MONTH_CHOICES = [
     (11, "November"),
     (12, "December"),
 ]
+current_year = datetime.now().year
+YEAR_CHOICES = [(year, year) for year in range(2020, current_year + 6)]
 
 
-def get_transaction_chart_data(qs):
-    count_per_category = (
-        qs.order_by("category").values("category").annotate(total=Sum("amount"))
+def get_transaction_chart_data(qs: QuerySet):
+    sum_per_category = (
+        qs.values("category").annotate(total=Sum("amount")).order_by("-total")
     )
-    category_pks = count_per_category.values_list("category", flat=True)
-    total_amounts = count_per_category.values_list("total", flat=True)
-    categories = (
-        Category.objects.filter(pk__in=category_pks)
-        .values_list("name", flat=True)
-        .order_by("pk")
+    category_pks = sum_per_category.values_list("category", flat=True)
+    category_totals = sum_per_category.values_list("total", flat=True)
+    categories = Category.objects.filter(pk__in=category_pks).values_list(
+        "name", flat=True
     )
-    return list(categories), list(total_amounts)
+    return list(categories), list(category_totals)

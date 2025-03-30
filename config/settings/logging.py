@@ -43,15 +43,7 @@ LOGGING = {
             "level": "INFO",
             "handlers": ["file"],
         },
-        "vendors": {
-            "level": "INFO",
-            "handlers": ["file"],
-        },
-        "products": {
-            "level": "INFO",
-            "handlers": ["file"],
-        },
-        "carts": {
+        "tracker": {
             "level": "INFO",
             "handlers": ["file"],
         },

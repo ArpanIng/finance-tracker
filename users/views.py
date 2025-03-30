@@ -90,7 +90,7 @@ class AccountActivateRequestView(FormView):
     and sending that link to the user’s registered email address.
     This view will send an email if:
     - The email address provided exists in the system.
-    - The `is_active' field is false.
+    - The `is_active` field is false.
     """
 
     template_name = "users/accounts/account_activate_form.html"
