@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from import_export.admin import ImportExportModelAdmin
+
 from .models import Category, Transaction
 
 
@@ -10,7 +12,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Transaction)
-class TransactionAdmin(admin.ModelAdmin):
+class TransactionAdmin(ImportExportModelAdmin):
     list_display = [
         "note",
         "category",

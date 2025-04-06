@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "django_filters",
     "django_htmx",
+    "import_export",
 ]
 
 MIDDLEWARE = [
@@ -169,3 +170,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 ACCOUNT_LOGIN_METHODS = {"email"}
+
+# django import-export configuration
+from import_export.formats.base_formats import CSV, JSON, XLSX
+
+IMPORT_EXPORT_FORMATS = [CSV, JSON, XLSX]

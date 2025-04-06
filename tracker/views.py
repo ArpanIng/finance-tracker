@@ -6,6 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views.generic.base import TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django_filters.views import FilterView
@@ -15,8 +16,9 @@ from .filters import (
     TransactionStasticsFilter,
     TransactionTotalStasticsFilter,
 )
-from .forms import CategoryForm, TransactionForm
+from .forms import CategoryForm, TransactionForm, TransactionExportFormatForm
 from .models import Category, Transaction, TransactionTextChoices
+from .resources import TransactionResource
 from .utils import get_transaction_chart_data
 
 
@@ -62,6 +64,7 @@ class TransactionListView(LoginRequiredMixin, FilterView):
         context["total_incomes"] = total_incomes
         context["total_expenses"] = total_expenses
         context["net_income"] = net_income
+        context["export_form"] = TransactionExportFormatForm
         return context
 
 
@@ -221,6 +224,29 @@ class TransactionTotalStatisticsView(LoginRequiredMixin, FilterView):
         context["total_incomes_per_month"] = total_incomes_per_month
         context["total_expenses_per_month"] = total_expenses_per_month
         return context
+
+
+class TransactionExportView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        qs = Transaction.objects.filter(user=user).select_related("category")
+
+        dataset = TransactionResource().export(qs)
+        format = request.GET.get("format")
+        if format == "csv":
+            ds = dataset.csv
+        elif format == "json":
+            ds = dataset.json
+        elif format == "xlsx":
+            ds = dataset.xlsx
+
+        now = timezone.now()
+        date = now.date()
+        response = HttpResponse(ds, content_type=f"{format}")
+        response["Content-Disposition"] = (
+            f'attachment; filename="Transaction-{str(date)}.{format}"'
+        )
+        return response
 
 
 class ManageView(LoginRequiredMixin, View):

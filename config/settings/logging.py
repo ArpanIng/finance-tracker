@@ -2,8 +2,6 @@ import os
 
 from config.env import BASE_DIR
 
-DJANGO_APPS_NAMES = ["tracker", "users"]
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -46,6 +44,10 @@ LOGGING = {
         "tracker": {
             "level": "INFO",
             "handlers": ["file"],
+        },
+        "import_export": {
+            "level": "INFO",
+            "handlers": ["console"],
         },
     },
 }

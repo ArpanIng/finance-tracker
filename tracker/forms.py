@@ -3,6 +3,12 @@ from django.core.exceptions import ValidationError
 
 from .models import Category, Transaction
 
+EXPORT_FORMAT_CHOICES = (
+    ("csv", "CSV"),
+    ("json", "JSON"),
+    ("xlsx", "XLSX"),
+)
+
 
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -63,3 +69,7 @@ class TransactionForm(forms.ModelForm):
         if amount < 0:
             raise ValidationError("Amount must be a positive number.")
         return amount
+
+
+class TransactionExportFormatForm(forms.Form):
+    format = forms.ChoiceField(choices=EXPORT_FORMAT_CHOICES, widget=forms.Select())
