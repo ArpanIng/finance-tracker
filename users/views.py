@@ -2,7 +2,7 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import logout, get_user_model
+from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,11 +12,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic.base import View, TemplateView
 from django.views.generic import FormView
+from django.views.generic.base import TemplateView, View
 
-
-from .forms import EmailConfirmationForm, AccountActivationForm
+from .forms import AccountActivationForm, EmailConfirmationForm
 
 User = get_user_model()
 

@@ -25,6 +25,17 @@ ruff = "^0.6.8"
 ipython = "^8.28.0"
 faker = "^37.0.2"
 
+
+[tool.poetry.group.test.dependencies]
+coverage = "^7.8.0"
+factory-boy = "^3.3.3"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+extend-select = ["I"]

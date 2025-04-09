@@ -16,11 +16,10 @@ from .filters import (
     TransactionStasticsFilter,
     TransactionTotalStasticsFilter,
 )
-from .forms import CategoryForm, TransactionForm, TransactionExportFormatForm
+from .forms import CategoryForm, TransactionExportFormatForm, TransactionForm
 from .models import Category, Transaction, TransactionTextChoices
 from .resources import TransactionResource
 from .utils import get_transaction_chart_data
-
 
 logger = logging.getLogger(__name__)
 

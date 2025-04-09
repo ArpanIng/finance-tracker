@@ -159,9 +159,6 @@ APP_NAME = "BudgetMe"
 SUPPORT_FROM_EMAIL = "noreply@support.com"
 SUPPORT_TEAM_NAME = f"{APP_NAME} Support"
 
-# logging configuration
-from .logging import LOGGING
-
 # django crispy forms configuration
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -175,3 +172,11 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 from import_export.formats.base_formats import CSV, JSON, XLSX
 
 IMPORT_EXPORT_FORMATS = [CSV, JSON, XLSX]
+
+# logging configuration
+import logging.config
+
+from .logging import LOGGING
+
+LOGGING_CONFIG = None
+logging.config.dictConfig(LOGGING)

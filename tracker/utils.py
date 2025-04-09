@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from django.db.models import Sum, QuerySet
-
+from django.db.models import QuerySet, Sum
 
 from .models import Category
 

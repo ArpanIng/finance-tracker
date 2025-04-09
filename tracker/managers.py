@@ -1,5 +1,3 @@
-from datetime import date
-
 from django.db import models
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import TruncMonth
