@@ -30,3 +30,43 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block scripts %}
+{% if request.user.is_authenticated %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const notificationBtnEl = document.querySelector("#notification-btn");
+    const notificationIconEl = document.querySelector("#notification-icon");
+    const notificationMessageEl = document.querySelector("#notification-message");
+    const notificationCountEl = document.getElementById('notification-count');
+
+    let notificationCount = 0;
+    
+    notificationBtnEl.addEventListener("click", function() {
+        notificationIconEl.classList.toggle("bi-bell");
+        notificationIconEl.classList.toggle("bi-bell-fill");
+    })
+    
+    let socket = new WebSocket("ws://127.0.0.1:8000/ws/notifications/");
+    socket.onmessage = function(e) {
+        let data = JSON.parse(e.data);
+        console.log(data);
+        notificationCount++;
+        updateNotificationCount(notificationCount)
+        notificationMessageEl.innerText = data.message;
+    }
+    
+    function updateNotificationCount(count) {
+        notificationCountEl.innerText = count;
+        if (notificationCount <= 0) {
+            notificationCountEl.classList.add("d-none");
+            notificationCountEl.classList.remove("d-inline");
+        } else {
+            notificationCountEl.classList.remove("d-none");
+            notificationCountEl.classList.add("d-inline");
+        }
+    }
+})
+</script>
+{% endif %}
+{% endblock scripts %}

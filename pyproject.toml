@@ -16,6 +16,10 @@ django-htmx = "^1.19.0"
 crispy-bootstrap5 = "^2024.2"
 django-environ = "^0.12.0"
 django-import-export = {extras = ["xlsx"], version = "^4.3.7"}
+channels = {extras = ["daphne"], version = "^4.2.2"}
+celery = "^5.5.1"
+channels-redis = "^4.2.1"
+django-celery-beat = "^2.7.0"
 
 
 [tool.poetry.group.dev.dependencies]

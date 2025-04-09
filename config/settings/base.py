@@ -23,6 +23,7 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     "django_filters",
     "django_htmx",
+    "django_celery_beat",
     "import_export",
 ]
 
@@ -77,6 +79,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Channels configuration
+ASGI_APPLICATION = "config.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [f"redis://:{env('REDIS_PASSWORD')}@127.0.0.1:6379/0"],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -172,6 +185,11 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 from import_export.formats.base_formats import CSV, JSON, XLSX
 
 IMPORT_EXPORT_FORMATS = [CSV, JSON, XLSX]
+
+# Celery configuration
+CELERY_BROKER_URL = f"redis://:{env('REDIS_PASSWORD')}@127.0.0.1:6379/1"  # : before password indicates that no username is required
+CELERY_TIMEZONE = "Asia/Kathmandu"
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 # logging configuration
 import logging.config

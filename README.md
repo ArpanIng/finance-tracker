@@ -24,6 +24,29 @@ python manage.py migrate
 python manage.py generate_transactions
 ```
 
+## Setup Environment Variables
+
+```text
+SECRET_KEY=
+DEBUG=
+ALLOWED_HOSTS=
+REDIS_PASSWORD=
+```
+
+## Celery
+
+### Start worker process
+
+```bash
+celery -A config worker -l INFO
+```
+
+### Start scheduler
+
+```bash
+celery -A config beat -l INFO
+```
+
 ## Runserver
 
 ### Run the development server
@@ -46,7 +69,7 @@ python manage.py runserver --settings=config.settings.production
 
 ## Testing
 
-### Run Tetsts
+### Run Tests
 
 ```bash
 python manage.py test app_name

@@ -13,6 +13,26 @@
             </form>
 
             {% if request.user.is_authenticated %}
+            <div class="dropdown-center me-4">
+                <button
+                    class="btn btn-light position-relative dropdown-toggle"
+                    id="notification-btn"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    <i class="bi bi-bell" id="notification-icon"></i>
+                    <span
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                        id="notification-count"
+                    >
+                    </span>
+                </button>
+                <div class="dropdown-menu p-3 text-muted" style="width: 350px; max-width: 350px;">
+                    <p id="notification-message">No notifications yet.</p>
+                </div>
+            </div>
+
             <div class="dropdown text-end">
                 <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="#" alt="mdo" width="32" height="32" class="rounded-circle">
